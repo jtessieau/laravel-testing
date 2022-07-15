@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\AuthenticationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,6 +15,15 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Homepage
+Route::get('/', [HomeController::class, 'index']);
+
+// Authentication
+
+Route::get('/login', [AuthenticationController::class, 'login']);
+Route::post('/authenticate', [AuthenticationController::class, 'authenticate']);
+
+Route::get('/logout', [AuthenticationController::class, 'logout']);
+
+Route::get('/register', [AuthenticationController::class, 'register']);
+Route::post('/save-user', [AuthenticationController::class, 'saveUser']);
