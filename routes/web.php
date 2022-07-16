@@ -16,14 +16,14 @@ use App\Http\Controllers\AuthenticationController;
 */
 
 // Homepage
-Route::get('/', [HomeController::class, 'index']);
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
 // Authentication
 
-Route::get('/login', [AuthenticationController::class, 'login']);
+Route::get('/login', [AuthenticationController::class, 'login'])->name('login');
 Route::post('/authenticate', [AuthenticationController::class, 'authenticate']);
 
-Route::get('/logout', [AuthenticationController::class, 'logout']);
+Route::get('/logout', [AuthenticationController::class, 'logout'])->name('logout');
 
-Route::get('/register', [AuthenticationController::class, 'register']);
-Route::post('/save-user', [AuthenticationController::class, 'saveUser']);
+Route::get('/register', [AuthenticationController::class, 'create'])->name('register');
+Route::post('/save-user', [AuthenticationController::class, 'store']);

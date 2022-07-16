@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class AuthenticationController extends Controller
@@ -21,9 +22,10 @@ class AuthenticationController extends Controller
             'password' => ['required'],
         ]);
 
+        $credentials['email'] = strtolower($credentials['email']);
+
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-
             return redirect()->intended();
         }
 
@@ -42,29 +44,31 @@ class AuthenticationController extends Controller
         return redirect('/');
     }
 
-    public function register()
+
+    // Register a new user.
+
+    public function create()
     {
         return view('authentication.register');
     }
 
-    public function saveUser(Request $request)
+    public function store(Request $request)
     {
-        $userData = $request->validate([
-            'name' => ['required'],
-            'email' => ['required', 'email'],
-            'password' => ['required']
+        $userFormData = $request->validate([
+            'name' => ['required', 'min:3'],
+            'email' => ['required', 'email', Rule::unique('users', 'email')],
+            'password' => ['required', 'confirmed', 'min:8']
         ]);
 
-        if ($userData) {
-            $user = new User();
-            $user->name = $userData['name'];
-            $user->email = $userData['email'];
-            $user->password = Hash::make($userData['password']);
-            $user->save();
+        $userCleanData = [
+            'name' => ucfirst(strtolower($userFormData['name'])),
+            'email' => strtolower($userFormData['email']),
+            'password' => Hash::make($userFormData['password'])
+        ];
 
-            return redirect('/login');
-        }
+        $user = User::create($userCleanData);
+        Auth::login($user);
 
-        return back();
+        return redirect('/');
     }
 }
