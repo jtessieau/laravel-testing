@@ -20,10 +20,20 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 
 // Authentication
 
-Route::get('/login', [AuthenticationController::class, 'login'])->name('login');
-Route::post('/authenticate', [AuthenticationController::class, 'authenticate']);
+Route::get('/login', [AuthenticationController::class, 'login'])
+    ->name('login')
+    ->middleware('guest');
 
-Route::get('/logout', [AuthenticationController::class, 'logout'])->name('logout');
+Route::post('/authenticate', [AuthenticationController::class, 'authenticate'])
+    ->middleware('guest');
 
-Route::get('/register', [AuthenticationController::class, 'create'])->name('register');
-Route::post('/save-user', [AuthenticationController::class, 'store']);
+Route::get('/logout', [AuthenticationController::class, 'logout'])
+    ->name('logout')
+    ->middleware('auth');
+
+Route::get('/register', [AuthenticationController::class, 'create'])
+    ->name('register')
+    ->middleware('guest');
+
+Route::post('/save-user', [AuthenticationController::class, 'store'])
+    ->middleware('guest');
